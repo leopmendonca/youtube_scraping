@@ -4,7 +4,7 @@ class Youtube:
     def __init__(self, gravadoras):
         api_service_name = 'youtube'
         api_version = 'v3'
-        apiKey = "AIzaSyA11UMy-tpt_FXxjzBFkfYk2TwLKt0C-n0"
+        apiKey = "xxxxxxxxxxxxxxxxxxxx"
         self.youtube = build(api_service_name, api_version, developerKey=apiKey)
         self.gravadoras = gravadoras
         self.tabela_dados = []
@@ -50,3 +50,5 @@ class Youtube:
             statistics = item['statistics']
             statistics['videoid'] = item['id']
             self.videos_stats.append(statistics)
+
+    def dataframes(self):
