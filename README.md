@@ -7,6 +7,9 @@ Permite a análise e acompanhamento da performance de múltiplos canais do YouTu
 ## Requeriments:
 
     !pip install --upgrade google-api-python-client
+
+## Imports:
+
     from googleapiclient.discovery import build
     import pandas as pd
 
@@ -201,10 +204,10 @@ Exporta os Data Frames para arquivos .CSV.
 
     def get_csv_file(self):
         file_name = 'Dados performance.csv'
-        self.df_geral.to_csv(file_name, sep=';', encoding='mbcs')
+        self.df_geral.to_csv(file_name, sep=';', encoding='utf-8')
 
         file_name = 'Dados gravadoras.csv'
-        self.df_dados_canais.to_csv(file_name, sep=';', encoding='mbcs')
+        self.df_dados_canais.to_csv(file_name, sep=';', encoding='utf-8')
 
 ## OUTPUTS
 O algoritmo retornará dois arquivos .CSV em que constam os dados necessários para análise:

@@ -133,7 +133,7 @@ class Youtube:
 
     def get_csv_file(self):
         file_name = 'Dados performance.csv'
-        self.df_geral.to_csv(file_name, sep=';', encoding='mbcs')
+        self.df_geral.to_csv(file_name, sep=';', encoding='utf-8')
 
         file_name = 'Dados gravadoras.csv'
-        self.df_dados_canais.to_csv(file_name, sep=';', encoding='mbcs')
+        self.df_dados_canais.to_csv(file_name, sep=';', encoding='utf-8')
