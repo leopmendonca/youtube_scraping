@@ -194,10 +194,10 @@ A saída deste método são duas tabelas:
 Exporta os Data Frames para arquivos .CSV.
 
         file_name = 'Dados performance.csv'
-        self.df_geral.to_csv(file_name)
+        self.df_geral.to_csv(file_name, sep=';', encoding='mbcs')
 
         file_name = 'Dados gravadoras.csv'
-        self.df_dados_canais.to_csv(file_name)
+        self.df_dados_canais.to_csv(file_name, sep=';', encoding='mbcs')
 
 
 ## Referências
