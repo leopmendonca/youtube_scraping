@@ -1,15 +1,13 @@
 # -*- encoding: utf-8 -*-
 import pandas as pd
-import plotly.express as px
 from googleapiclient.discovery import build
-pd.set_option('display.max_columns', None)
 # import requirements ????
 
 class Youtube:
     def __init__(self, gravadoras):
         api_service_name = 'youtube'
         api_version = 'v3'
-        apiKey = "AIzaSyA11UMy-tpt_FXxjzBFkfYk2TwLKt0C-n0"
+        apiKey = "AIzaSyAL11anR0sxdpYEGHgF-8vfW0ERUUWzbmQ"
         self.youtube = build(api_service_name, api_version, developerKey=apiKey)
         self.gravadoras = gravadoras
         self.dados_canal = []
@@ -19,19 +17,21 @@ class Youtube:
         self.list_titles = []
         self.list_artists = []
 
+
     def run(self):
         self.get_gravadoras_statistics()
         self.get_df_videosids()
         self.get_videos_statistics()
-        self.get_artists_and_date()
+        self.get_artists()
         self.get_dataframes()
-        self.get_excel_file()
-        print('\nRun concluido sem erros')
-        
+        self.get_csv_file()
+        print('\nRun concluido com sucesso')
+
+
     def get_gravadoras_statistics(self):
         request = self.youtube.channels().list(part="snippet,contentDetails,statistics", id=','.join(self.gravadoras.values()))
         response = request.execute()
-        print('Identificar onde está o ID:', response)
+
         for item in response['items']:
             data = {
                 'ChannelName': item['snippet']['title'],
@@ -43,8 +43,7 @@ class Youtube:
             }
             self.dados_canal.append(data)
             self.total_playlist_IDs.append(data['ChannelPlaylistId'])
-        print('\nIDs das playlists:', self.total_playlist_IDs)
-        print('\nDados dos canais:', self.dados_canal)
+
 
     def get_df_videosids(self):
         for playlist_id in self.total_playlist_IDs:
@@ -76,7 +75,7 @@ class Youtube:
                         }
                         self.videos_IDs.append(data)
                         next_page_token = response.get('nextPageToken')
-        print('\nIDs dos videos:', self.videos_IDs)
+
 
     def get_videos_statistics(self):
         for item in self.videos_IDs:
@@ -95,13 +94,9 @@ class Youtube:
                 statistics = item['statistics']
                 statistics['videoid'] = item['id']
                 self.videos_stats.append(statistics)
-        print('\nStats de um video:', statistics)
-        print('\nStats de todos os videos:', self.videos_stats)
-        print('\nGeral videos:', response)
-        print('\nLista titulos:', self.list_titles)
 
 
-    def get_artists_and_date(self):
+    def get_artists(self):
         for list in self.list_titles:
             title = list['Titulo']
             artist = title.split('-')[0].strip()
@@ -110,7 +105,7 @@ class Youtube:
                 'Artist': artist
             }
             self.list_artists.append(data)
-        print(self.list_artists)
+
 
     def get_dataframes(self):
         self.df_dados_canais = pd.DataFrame(self.dados_canal)
@@ -130,21 +125,16 @@ class Youtube:
         numeric_columns = ['ViewsCount', 'LikeCount', 'FavoriteCount', 'CommentCount']
         self.df_geral[numeric_columns] = self.df_geral[numeric_columns].apply(pd.to_numeric, errors='coerce', axis=1)
 
+        self.df_geral['PublishDate'].astype('datetime64')
         self.df_geral['PublishDate'].sort_values().value_counts()
-        print(self.df_geral)
 
         numeric_columns = ['Subscribers', 'ChannelViews', 'ChannelTotalVideos']
         self.df_dados_canais[numeric_columns] = self.df_dados_canais[numeric_columns].apply(pd.to_numeric, errors='coerce', axis=1)
 
-        print(self.df_dados_canais)
-        print(self.df_dados_canais.dtypes)
 
-    def get_excel_file(self):
-        file_name = 'Dados performance.xlsx'
-        self.df_geral.to_excel(file_name)
+    def get_csv_file(self):
+        file_name = 'Dados performance.csv'
+        self.df_geral.to_csv(file_name)
 
-        file_name = 'Dados gravadoras.xlsx'
-        self.df_dados_canais.to_excel(file_name)
-
-
-# if __name__ == '__main__'
+        file_name = 'Dados gravadoras.csv'
+        self.df_dados_canais.to_csv(file_name)
