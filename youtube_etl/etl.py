@@ -6,7 +6,7 @@ class Youtube:
     def __init__(self, gravadoras):
         api_service_name = 'youtube'
         api_version = 'v3'
-        apiKey = "AIzaSyAL11anR0sxdpYEGHgF-8vfW0ERUUWzbmQ"
+        apiKey = "YOUR_API_KEY"
         self.youtube = build(api_service_name, api_version, developerKey=apiKey)
         self.gravadoras = gravadoras
         self.dados_canal = []
