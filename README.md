@@ -36,7 +36,7 @@ Ali você pode buscar o Channel ID que estará no seguinte formato:
 
     <link itemprop="url" href="http://www.youtube.com/channel/#channelID">
 
-# Code Run!
+## Code Run!
 Todos os métodos definidos estão dentro da classe **Youtube**. 
 
 ### Class Youtube
@@ -63,6 +63,7 @@ Este método executa todos os métodos declarados na Classe Youtube, registrados
 
 São eles:
 
+    def run(self):
         self.get_gravadoras_statistics()
         self.get_df_videosids()
         self.get_videos_statistics()
@@ -76,7 +77,8 @@ A seguir, são explicados cada um.
 Extrai os dados gerais do canal de cada gravadora em um dicionário e armazena em uma lista.
 
 Armazena em outra lista a _playlistID_ de cada canal.
-
+    
+    def get_gravadoras_statistics(self):
         request = self.youtube.channels().list(part="snippet,contentDetails,statistics", id=','.join(self.gravadoras.values()))
         response = request.execute()
 
@@ -95,6 +97,7 @@ Armazena em outra lista a _playlistID_ de cada canal.
 ### get_df_videosids( )
 Busca o _VideoID_ de todos os vídeos das playlists extraídas e armazena em uma lista de dicionários.
 
+    def get_df_videosids(self):
         for playlist_id in self.total_playlist_IDs:
             request = self.youtube.playlistItems().list(part='snippet,contentDetails', playlistId=playlist_id, maxResults=50)
             response = request.execute()
@@ -128,6 +131,7 @@ Busca o _VideoID_ de todos os vídeos das playlists extraídas e armazena em uma
 ### get_videos_statistics( )
 Busca os _statistics_ e os _títulos_ de cada video a partir do VideoID, formando duas listas de dicionários.
 
+    def get_videos_statistics(self):
         for item in self.videos_IDs:
             self.video_id = item['VideoID']
             estatisticas_videos = self.youtube.videos().list(id=self.video_id, part='statistics, snippet')
@@ -148,6 +152,7 @@ Busca os _statistics_ e os _títulos_ de cada video a partir do VideoID, formand
 ### get_artists( )
 Extrai os artistas de cada vídeo baseando-se no título do vídeo, que usualmente segue a regra "NOME DO ARTISTA - NOME DA MÚSICA". Armazena os resultados como dicionários em uma lista.
 
+    def get_artists(self):
         for list in self.list_titles:
             title = list['Titulo']
             artist = title.split('-')[0].strip()
@@ -160,6 +165,7 @@ Extrai os artistas de cada vídeo baseando-se no título do vídeo, que usualmen
 ### get_dataframes( )
 Usando Pandas, transforma cada lista de dicionários extraída em um **Data Frame**, que serão mesclados e formatados segundo a necessidade.
 
+    def get_dataframes(self):
         self.df_dados_canais = pd.DataFrame(self.dados_canal)
         self.df_videos_ids = pd.DataFrame(self.videos_IDs)
         self.df_videos_stats = pd.DataFrame(self.videos_stats)
@@ -193,12 +199,19 @@ A saída deste método são duas tabelas:
 ### get_csv_file( )
 Exporta os Data Frames para arquivos .CSV.
 
+    def get_csv_file(self):
         file_name = 'Dados performance.csv'
         self.df_geral.to_csv(file_name, sep=';', encoding='mbcs')
 
         file_name = 'Dados gravadoras.csv'
         self.df_dados_canais.to_csv(file_name, sep=';', encoding='mbcs')
 
+## OUTPUTS
+O algoritmo retornará dois arquivos .CSV em que constam os dados necessários para análise:
+- do canal: **'Dados gravadoras.csv'**, onde constam os dados normalizados do canal de cada gravadora - ChannelName, ChannelID, Subscribers, ChannelViews, ChannelTotalVideos e ChannelPlaylist. 
+
+
+- dos vídeos: **'Dados performance.csv'**, onde constam os dados normalizados dos vídeos postados, relacionados com o canal - ChannelName, ChannelID, VideoID, Titulo, Artist, PublishDate, Publish Time, ViewsCount, LikeCount, FavoriteCount e CommentCount.
 
 ## Referências
 
